@@ -2,17 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Services\SimplePhpClassInvoker;
+use App\Enum\PhpExecStatusEnum;
+use App\Models\PhpExecCommandModel;
 use Illuminate\Console\Command;
 
-final class BackgroundExec extends Command
+final class PhpExecCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:background-exec
+    protected $signature = 'app:php-exec
                             {fqcn : Fully Qualified Class Name (FQCN) e.g. App\Model\User}
                             {method : The method to invoke on the FQCN instance e.g. create}
                             {arguments?* : Arguments in the order expected by the method signature}
@@ -35,11 +36,14 @@ final class BackgroundExec extends Command
         $arguments = $this->argument('arguments');
         $static = (bool)$this->option('static');
 
-        SimplePhpClassInvoker::runBackgroundJob(
-            fqcn: $fqcn,
-            method: $method,
-            static: $static,
-            arguments: $arguments,
-        );
+        $command = PhpExecCommandModel::create([
+            'fqcn' => $fqcn,
+            'method' => $method,
+            'arguments' => $arguments,
+            'static' => $static,
+            'status' => PhpExecStatusEnum::Pending->value,
+        ]);
+
+        \Log::info(sprintf('Saved command {%s}::{%s} status={%s}', $fqcn, $method, $command->status), compact(['fqcn', 'method', 'arguments', 'static']));
     }
 }

@@ -2,16 +2,23 @@
 
 namespace App\Services;
 
+use Throwable;
+
 final class SimplePhpClassInvoker
 {
-    public static function runBackgroundJob(string $fqcn, string $method, bool $static, array $arguments = []): void
+    /**
+     * @param string $fqcn Fully Classified Class Name (FQCN)
+     * @param string $method Method to be invoked
+     * @param bool $static Whether the method should be invoked statically on the FQCN or on the object instance
+     * @param array $arguments Arguments list, in the order expected by the method specified
+     * @throws Throwable
+     */
+    public static function invoke(string $fqcn, string $method, bool $static, array $arguments = []): void
     {
         if ($static) {
-            $result = $fqcn::{$method}(...$arguments);
+            $fqcn::{$method}(...$arguments);
         } else {
-            $result = $fqcn->{$method}(...$arguments);
+            $fqcn->{$method}(...$arguments);
         }
-
-        dump($result);
     }
 }
