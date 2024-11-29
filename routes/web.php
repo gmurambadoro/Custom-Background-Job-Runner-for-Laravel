@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\BackgroundJobsController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::controller(BackgroundJobsController::class)
+    ->name('background-jobs.')
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+    });

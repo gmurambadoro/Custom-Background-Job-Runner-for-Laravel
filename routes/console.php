@@ -38,7 +38,7 @@ function runBackgroundJob(): void
 
                 $command->update([
                     'status' => PhpExecStatusEnum::Failed->value,
-                    'output' => collect([$exception->getMessage(), $exception->getTraceAsString()])->join(PHP_EOL),
+                    'output' => $exception->getMessage(),
                 ]);
             }
         }

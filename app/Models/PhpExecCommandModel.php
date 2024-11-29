@@ -32,4 +32,11 @@ class PhpExecCommandModel extends Model
             },
         );
     }
+
+    public function failed(): Attribute
+    {
+        return new Attribute(
+            get: fn() => $this->status === PhpExecStatusEnum::Failed->value,
+        );
+    }
 }

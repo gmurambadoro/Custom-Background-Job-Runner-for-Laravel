@@ -44,7 +44,7 @@ final class PhpExecCommand extends Command
             \Validator::make(compact('fqcn', 'method', 'arguments', 'static'), rules: [
                 'fqcn' => 'required',
                 'method' => 'required',
-                'arguments' => 'required|array',
+                'arguments' => 'nullable|array',
                 'static' => 'boolean',
             ])->validate();
 
