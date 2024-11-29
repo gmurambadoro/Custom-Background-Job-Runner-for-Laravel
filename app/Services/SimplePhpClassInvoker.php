@@ -15,6 +15,8 @@ final class SimplePhpClassInvoker
      */
     public static function invoke(string $fqcn, string $method, bool $static, array $arguments = []): void
     {
+        // todo: Validate arguments
+
         if ($static) {
             $fqcn::{$method}(...$arguments);
         } else {

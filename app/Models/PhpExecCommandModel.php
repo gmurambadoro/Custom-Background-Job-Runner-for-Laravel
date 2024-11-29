@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PhpExecStatusEnum;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class PhpExecCommandModel extends Model
@@ -16,4 +17,19 @@ class PhpExecCommandModel extends Model
         'script' => PhpExecStatusEnum::class,
         'is_static' => 'boolean',
     ];
+
+    public function commandText(): Attribute
+    {
+        return new Attribute(
+            get: function () {
+                $args = collect($this->arguments)->map(fn($item) => sprintf('"%s"', $item))->join(", ");
+
+                if ($this->is_static) {
+                    return sprintf("%s::%s(%s)", $this->fqcn, $this->method, $args);
+                } else {
+                    return sprintf('(new %s())->%s(%s)', $this->fqcn, $this->method, $args);
+                }
+            },
+        );
+    }
 }

@@ -56,15 +56,13 @@ final class PhpExecCommand extends Command
                 'status' => PhpExecStatusEnum::Pending->value,
             ]);
 
-            $this->info($message = sprintf('Saved command {%s}::{%s} status=%s', $fqcn, $method, $command->status));
+            $this->info($message = sprintf('Saved command %s', $command->command_text));
 
             \Log::info($message, compact(['fqcn', 'method', 'arguments', 'static']));
         } catch (\Throwable $exception) {
-            $error = sprintf('Error: {%s}::{%s} %s', $fqcn, $method, $exception->getMessage());
-
-            $this->error($error);
-            \Log::error($error);
-
+            $errorMessage = sprintf('Error: {%s}::{%s} %s', $fqcn, $method, $exception->getMessage());
+            $this->error($errorMessage);
+            \Log::error($errorMessage);
         }
     }
 }

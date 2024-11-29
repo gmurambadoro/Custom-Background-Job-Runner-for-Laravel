@@ -32,9 +32,9 @@ function runBackgroundJob(): void
 
                 $command->update(['status' => PhpExecStatusEnum::Completed->value]);
 
-                Log::info(sprintf('Successfully executed command: %s::%s', $command->fqcn, $command->method));
+                Log::info(sprintf('Successfully executed command: %s', $command->command_text));
             } catch (Throwable $exception) {
-                Log::error($exception->getMessage());
+                Log::error(collect([$exception->getMessage(), $exception->getTraceAsString()])->join(PHP_EOL));
 
                 $command->update([
                     'status' => PhpExecStatusEnum::Failed->value,
