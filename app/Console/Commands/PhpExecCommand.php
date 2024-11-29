@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\PhpExecStatusEnum;
+use App\Enums\PhpJobStatusEnum;
 use App\Models\PhpExecCommandModel;
 use Illuminate\Console\Command;
 
@@ -17,6 +17,7 @@ final class PhpExecCommand extends Command
                             {fqcn : Fully Qualified Class Name (FQCN) e.g. App\Model\User}
                             {method : The method to invoke on the FQCN instance e.g. create}
                             {arguments?* : Arguments in the order expected by the method signature}
+                            {--priority=0 : Priority of the job, either 0, 1 or 2}
                             {--static : Whether the invocation is static or not. A static invocation is invoked on the class directly and not on it\'s object instance.}';
 
     /**
@@ -35,6 +36,7 @@ final class PhpExecCommand extends Command
         $method = $this->argument('method');
         $arguments = $this->argument('arguments') ?? [];
         $static = (bool)$this->option('static') ?? false;
+        $priority = (int)$this->option('priority');
 
         try {
             $message = sprintf('%s: Received payload for command {%s}::{%s} static=%s.', $this->name, $fqcn, $method, $static ? 'true' : 'false');
@@ -46,6 +48,7 @@ final class PhpExecCommand extends Command
                 'method' => 'required',
                 'arguments' => 'nullable|array',
                 'static' => 'boolean',
+                'priority' => 'int|between:0,2',
             ])->validate();
 
             $command = PhpExecCommandModel::create([
@@ -53,7 +56,8 @@ final class PhpExecCommand extends Command
                 'method' => $method,
                 'arguments' => $arguments,
                 'is_static' => $static,
-                'status' => PhpExecStatusEnum::Pending->value,
+                'status' => PhpJobStatusEnum::Pending->value,
+                'priority' => $priority,
             ]);
 
             $this->info($message = sprintf('Saved command %s', $command->command_text));

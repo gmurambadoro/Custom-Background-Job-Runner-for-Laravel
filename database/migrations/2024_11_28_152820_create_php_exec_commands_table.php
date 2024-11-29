@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\PhpExecStatusEnum;
+use App\Enums\PhpJobStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('fqcn', length: 300);
             $table->string('method', length: 300);
             $table->json('arguments')->nullable();
-            $table->string('status', length: 15)->default(PhpExecStatusEnum::Pending->value);
+            $table->string('status', length: 15)->default(PhpJobStatusEnum::Pending->value);
             $table->text('output')->nullable();
             $table->timestamps();
         });

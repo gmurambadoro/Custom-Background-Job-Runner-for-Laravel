@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PhpExecStatusEnum: string
+enum PhpJobStatusEnum: string
 {
     case Pending = 'pending';
     case Running = 'running';

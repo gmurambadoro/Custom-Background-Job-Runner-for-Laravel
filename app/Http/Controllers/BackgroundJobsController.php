@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PhpExecStatusEnum;
+use App\Enums\PhpJobStatusEnum;
 use App\Http\Requests\BackgroundJobRequest;
 use App\Models\PhpExecCommandModel;
 use Illuminate\Http\RedirectResponse;
@@ -42,7 +42,7 @@ class BackgroundJobsController extends Controller
     {
         if ($job->failed) {
             $job->update([
-                'status' => PhpExecStatusEnum::Pending->value,
+                'status' => PhpJobStatusEnum::Pending->value,
                 'retry_count' => $job->retry_count + 1
             ]);
         }
