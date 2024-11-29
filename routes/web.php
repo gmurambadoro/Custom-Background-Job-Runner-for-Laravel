@@ -10,4 +10,5 @@ Route::controller(BackgroundJobsController::class)
         Route::get('/create', 'create')->name('create');
         Route::post('/store', 'store')->name('store');
         Route::get('/{job}/show', 'show')->name('show');
+        Route::get('/{job}/retry', 'retry')->name('retry');
     });

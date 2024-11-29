@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PhpExecStatusEnum;
+use App\Enums\PhpJobPriorityEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +16,7 @@ class PhpExecCommandModel extends Model
     protected $casts = [
         'arguments' => 'array',
         'script' => PhpExecStatusEnum::class,
+        'priority' => PhpJobPriorityEnum::class,
         'is_static' => 'boolean',
     ];
 

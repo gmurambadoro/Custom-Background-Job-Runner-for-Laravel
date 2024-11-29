@@ -26,13 +26,16 @@ class BackgroundJobRequest extends FormRequest
             'method' => 'required|max:300',
             'is_static' => 'nullable|boolean',
             'arguments' => 'nullable|array',
+            'priority' => 'integer|required',
         ];
     }
 
     public function prepareForValidation(): void
     {
         $this->merge([
-            'arguments' => explode(PHP_EOL, $this->input('arguments')),
+            'arguments' => $this->collect(explode(PHP_EOL, $this->input('arguments')))
+                ->filter(fn(string $item) => $this->str($item)->trim()->length())
+                ->toArray(),
         ]);
     }
 }

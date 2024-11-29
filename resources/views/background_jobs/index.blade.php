@@ -18,6 +18,7 @@
                     <th>#</th>
                     <th>Timestamp</th>
                     <th>Job</th>
+                    <th>Priority</th>
                     <th>Status</th>
                     <th></th>
                 </tr>
@@ -30,13 +31,20 @@
                         <td>
                             <samp>{{ $job->command_text }}</samp>
                         </td>
+                        <td>
+                            <samp>{{ $job->priority->name }}</samp>
+                        </td>
                         <td>{{ $job->status }}</td>
                         <td style="display: flex; gap: 2px;">
                             <a href="{{ route('background-jobs.show', $job) }}" role="button"
                                class="secondary">Details</a>
 
                             @if($job->failed)
-                                <a href="#" role="button">Retry</a>
+                                <a href="{{ route('background-jobs.retry', $job) }}" role="button">
+                                    Retry @if($job->retry_count)
+                                        ({{ $job->retry_count }})
+                                    @endif
+                                </a>
                             @endif
                         </td>
                     </tr>

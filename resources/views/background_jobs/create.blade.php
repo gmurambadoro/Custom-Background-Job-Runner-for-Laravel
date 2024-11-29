@@ -21,6 +21,7 @@
                             name="fqcn"
                             placeholder="E.g. App\\Models\\User"
                             required
+                            value="{{ old('fqcn') }}"
                         />
                     </label>
                     <label>
@@ -30,12 +31,14 @@
                             name="method"
                             placeholder="E.g. all"
                             required
+                            value="{{ old('method') }}"
                         />
                     </label>
 
                     <fieldset>
                         <label>
-                            <input type="checkbox" value="{{ true }}" name="is_static" role="switch"/>
+                            <input type="checkbox" value="{{ true }}" @checked(old('is_static')) name="is_static"
+                                   role="switch"/>
 
                             <span>The method is called <samp>statically</samp> on the <samp>FQCN</samp></span>
                         </label>
@@ -44,8 +47,25 @@
                     <label>
                         Arguments to pass to the method (each argument must be on its)
 
-                        <textarea name="arguments"
-                                  placeholder="Multiple arguments must be passed one per line"></textarea>
+                        <textarea
+                            name="arguments"
+                            placeholder="Multiple arguments must be passed one per line">{{ old('arguments') }}</textarea>
+                    </label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Job Priority:</legend>
+                    <label>
+                        <input type="radio" name="priority" value="{{ \App\Enums\PhpJobPriorityEnum::Low->value }}"/>
+                        Low
+                    </label>
+                    <label>
+                        <input type="radio" name="priority" value="{{ \App\Enums\PhpJobPriorityEnum::Medium->value }}"/>
+                        Medium
+                    </label>
+                    <label>
+                        <input type="radio" name="priority" value="{{ \App\Enums\PhpJobPriorityEnum::High->value }}"/>
+                        High
                     </label>
                 </fieldset>
 
