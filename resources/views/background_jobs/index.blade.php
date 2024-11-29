@@ -25,16 +25,10 @@
                 <tbody>
                 @foreach($jobs as $job)
                     <tr>
-                        <td>{{ $loop->iteration }}.</td>
+                        <td>{{ $loop->index + $jobs->firstItem() }}.</td>
                         <td>{{ $job->created_at->format('d M Y, H:i:s A') }}</td>
                         <td>
                             <samp>{{ $job->command_text }}</samp>
-
-                            @if($job->output)
-                                <br/>
-
-                                <div class="">{{ $job->output }}</div>
-                            @endif
                         </td>
                         <td>{{ $job->status }}</td>
                         <td style="display: flex; gap: 2px;">
@@ -49,6 +43,10 @@
                 @endforeach
                 </tbody>
             </table>
+        </div>
+
+        <div>
+            {{ $jobs->links() }}
         </div>
     @endif
 </x-layout>

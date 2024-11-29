@@ -25,4 +25,10 @@
         @endif
         </tbody>
     </table>
+
+    <div>
+        <a href="{{ route('background-jobs.index') }}" role="button" class="secondary">
+            &laquo; Back to jobs
+        </a>
+    </div>
 </x-layout>

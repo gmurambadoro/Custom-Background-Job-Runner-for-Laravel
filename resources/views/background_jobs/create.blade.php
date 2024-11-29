@@ -49,10 +49,20 @@
                     </label>
                 </fieldset>
 
-                <input
-                    type="submit"
-                    value="Schedule as background job"
-                />
+                <div class="grid">
+                    <div>
+                        <a href="{{ route('background-jobs.index') }}" role="button" class="secondary">
+                            Cancel
+                        </a>
+                    </div>
+
+                    <div>
+                        <input
+                            type="submit"
+                            value="Schedule as background job"
+                        />
+                    </div>
+                </div>
             </form>
         </div>
         <div></div>

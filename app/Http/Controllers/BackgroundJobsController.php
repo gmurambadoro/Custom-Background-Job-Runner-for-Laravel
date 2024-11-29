@@ -11,7 +11,7 @@ class BackgroundJobsController extends Controller
     public function index(): View
     {
         return view('background_jobs.index', [
-            'jobs' => PhpExecCommandModel::orderBy('id', 'desc')->paginate(50),
+            'jobs' => PhpExecCommandModel::orderBy('id', 'desc')->simplePaginate(5),
         ]);
     }
 
