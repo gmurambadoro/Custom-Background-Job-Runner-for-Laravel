@@ -33,13 +33,16 @@
                             @if($job->output)
                                 <br/>
 
-                                <pre>{{ $job->output }}</pre>
+                                <div class="">{{ $job->output }}</div>
                             @endif
                         </td>
                         <td>{{ $job->status }}</td>
-                        <td>
+                        <td style="display: flex; gap: 2px;">
+                            <a href="{{ route('background-jobs.show', $job) }}" role="button"
+                               class="secondary">Details</a>
+
                             @if($job->failed)
-                                <a role="button" href="#">Retry</a>
+                                <a href="#" role="button">Retry</a>
                             @endif
                         </td>
                     </tr>

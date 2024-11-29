@@ -20,7 +20,9 @@ final class SimplePhpClassInvoker
         if ($static) {
             $fqcn::{$method}(...$arguments);
         } else {
-            $fqcn->{$method}(...$arguments);
+            // create an instance
+            $instance = new $fqcn();
+            call_user_func_array([$instance, $method], $arguments);
         }
     }
 }

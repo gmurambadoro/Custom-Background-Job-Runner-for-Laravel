@@ -13,7 +13,9 @@
         <ul>
             <li>
                 <hgroup>
-                    <h2>{{ config('app.name') }}</h2>
+                    <h2>
+                        <a href="{{ route('background-jobs.index') }}">{{ config('app.name') }}</a>
+                    </h2>
                     <p>A custom system to execute PHP classes as background jobs, independent of Laravel's built-in
                         queue system</p>
                 </hgroup>
@@ -22,7 +24,11 @@
             </li>
         </ul>
         <ul>
-            <li><a href="#">+ New Job</a></li>
+            @unless(\Illuminate\Support\Facades\Route::is('background-jobs.create'))
+                <li>
+                    <a href="{{ route('background-jobs.create') }}" role="button" class="contrast">+ New Job</a>
+                </li>
+            @endunless
         </ul>
     </nav>
 
