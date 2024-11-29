@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enum\PhpExecStatusEnum;
+use App\Enums\PhpExecStatusEnum;
 use App\Models\PhpExecCommandModel;
 use Illuminate\Console\Command;
 
@@ -33,17 +33,38 @@ final class PhpExecCommand extends Command
     {
         $fqcn = $this->argument('fqcn');
         $method = $this->argument('method');
-        $arguments = $this->argument('arguments');
-        $static = (bool)$this->option('static');
+        $arguments = $this->argument('arguments') ?? [];
+        $static = (bool)$this->option('static') ?? false;
 
-        $command = PhpExecCommandModel::create([
-            'fqcn' => $fqcn,
-            'method' => $method,
-            'arguments' => $arguments,
-            'static' => $static,
-            'status' => PhpExecStatusEnum::Pending->value,
-        ]);
+        try {
+            $message = sprintf('%s: Received payload for command {%s}::{%s} static=%s.', $this->name, $fqcn, $method, $static ? 'true' : 'false');
 
-        \Log::info(sprintf('Saved command {%s}::{%s} status={%s}', $fqcn, $method, $command->status), compact(['fqcn', 'method', 'arguments', 'static']));
+            $this->info($message);
+
+            \Validator::make(compact('fqcn', 'method', 'arguments', 'static'), rules: [
+                'fqcn' => 'required',
+                'method' => 'required',
+                'arguments' => 'required|array',
+                'static' => 'boolean',
+            ])->validate();
+
+            $command = PhpExecCommandModel::create([
+                'fqcn' => $fqcn,
+                'method' => $method,
+                'arguments' => $arguments,
+                'is_static' => $static,
+                'status' => PhpExecStatusEnum::Pending->value,
+            ]);
+
+            $this->info($message = sprintf('Saved command {%s}::{%s} status=%s', $fqcn, $method, $command->status));
+
+            \Log::info($message, compact(['fqcn', 'method', 'arguments', 'static']));
+        } catch (\Throwable $exception) {
+            $error = sprintf('Error: {%s}::{%s} %s', $fqcn, $method, $exception->getMessage());
+
+            $this->error($error);
+            \Log::error($error);
+
+        }
     }
 }

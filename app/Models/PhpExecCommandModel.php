@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enum\PhpExecStatusEnum;
+use App\Enums\PhpExecStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 
 class PhpExecCommandModel extends Model

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Enum;
+namespace App\Enums;
 
-enum PhpExecStatusEnum : string
+enum PhpExecStatusEnum: string
 {
     case Pending = 'pending';
     case Running = 'running';
