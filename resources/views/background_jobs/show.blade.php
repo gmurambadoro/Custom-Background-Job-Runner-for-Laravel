@@ -13,8 +13,19 @@
         </tr>
         <tr>
             <th>Status</th>
-            <td>{{ $job->status }}</td>
+            <td>{{ $job->status->name }}</td>
         </tr>
+        <tr>
+            <th>Priority</th>
+            <td>{{ $job->priority->name }}</td>
+        </tr>
+
+        @if($job->delay)
+            <tr>
+                <th>Status</th>
+                <td><samp>{{ $job->delay }} seconds</samp></td>
+            </tr>
+        @endif
 
         @if ($job->output)
             <tr>
