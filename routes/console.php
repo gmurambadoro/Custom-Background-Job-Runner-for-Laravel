@@ -68,5 +68,8 @@ Artisan::command('inspire', function () {
 
 Artisan::command('runBackgroundJob', fn() => runBackgroundJob())
     ->purpose('Run PHP classes and methods in the background')
-    ->everyMinute()
+    // must not be run on schedule, but only when invoked.
+    // The job will wait patiently for early morning February, 31st before running.
+    // @see https://stackoverflow.com/questions/13835221/quartz-cron-expression-that-will-never-execute
+    ->cron("0 5 31 2 *")
     ->withoutOverlapping();

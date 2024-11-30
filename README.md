@@ -199,6 +199,29 @@ or simply select it in the *Priority* field of the *+ New Job* form.
 The background jobs processor will prioritize jobs in the following order: `high` -> `medium` -> `low`. The default
 priority is `low`.
 
+## `runBackgroundJob` function
+
+This function is found in `routes/console.php`.
+
+```php
+Artisan::command('runBackgroundJob', fn() => runBackgroundJob())
+    ->purpose('Run PHP classes and methods in the background')
+    // must not be run on schedule, but only when invoked.
+    // The job will wait patiently for early morning February, 31st before running.
+    // @see https://stackoverflow.com/questions/13835221/quartz-cron-expression-that-will-never-execute
+    ->cron("0 5 31 2 *")
+    ->withoutOverlapping();
+```
+
+This job will add some sample jobs automatically, and those will be processed in the background. Simply run this command
+*inside* the container:
+
+```shell
+php artisan runBackgroundJob
+```
+
+You can check the logs or dashboard for the status of the jobs that were ran.
+
 ## Logging strategy
 
 Logs for background jobs are stored in the `storage/logs/background_job.log` file. This is configured in the `custom`
