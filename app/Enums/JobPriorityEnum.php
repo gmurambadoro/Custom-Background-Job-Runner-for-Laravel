@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PhpJobPriorityEnum: int
+enum JobPriorityEnum: int
 {
     case Low = 0;
     case Medium = 1;

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\PhpJobStatusEnum;
-use App\Models\PhpExecCommandModel;
+use App\Enums\JobStatusEnum;
+use App\Models\BackgroundJob;
 use Illuminate\Console\Command;
 
 final class PhpExecCommand extends Command
@@ -51,12 +51,12 @@ final class PhpExecCommand extends Command
                 'priority' => 'int|between:0,2',
             ])->validate();
 
-            $command = PhpExecCommandModel::create([
+            $command = BackgroundJob::create([
                 'fqcn' => $fqcn,
                 'method' => $method,
                 'arguments' => $arguments,
                 'is_static' => $static,
-                'status' => PhpJobStatusEnum::Pending->value,
+                'status' => JobStatusEnum::Pending->value,
                 'priority' => $priority,
             ]);
 

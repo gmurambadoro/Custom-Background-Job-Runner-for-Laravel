@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use App\Enums\PhpJobPriorityEnum;
-use App\Enums\PhpJobStatusEnum;
+use App\Enums\JobPriorityEnum;
+use App\Enums\JobStatusEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
-class PhpExecCommandModel extends Model
+final class BackgroundJob extends Model
 {
-    protected $table = 'php_exec_commands';
+    protected $table = 'background_jobs';
 
     protected $guarded = ['id'];
 
     protected $casts = [
         'arguments' => 'array',
-        'script' => PhpJobStatusEnum::class,
-        'priority' => PhpJobPriorityEnum::class,
+        'script' => JobStatusEnum::class,
+        'priority' => JobPriorityEnum::class,
         'is_static' => 'boolean',
     ];
 
@@ -38,7 +38,7 @@ class PhpExecCommandModel extends Model
     public function failed(): Attribute
     {
         return new Attribute(
-            get: fn() => $this->status === PhpJobStatusEnum::Failed->value,
+            get: fn() => $this->status === JobStatusEnum::Failed->value,
         );
     }
 }

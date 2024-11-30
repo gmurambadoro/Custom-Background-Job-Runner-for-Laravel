@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PhpJobStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\Http\Requests\BackgroundJobRequest;
-use App\Models\PhpExecCommandModel;
+use App\Models\BackgroundJob;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -13,7 +13,7 @@ class BackgroundJobsController extends Controller
     public function index(): View
     {
         return view('background_jobs.index', [
-            'jobs' => PhpExecCommandModel::orderBy('id', 'desc')->simplePaginate(15),
+            'jobs' => BackgroundJob::orderBy('id', 'desc')->simplePaginate(15),
         ]);
     }
 
@@ -26,23 +26,23 @@ class BackgroundJobsController extends Controller
     {
         $validated = $request->validated();
 
-        PhpExecCommandModel::create($validated);
+        BackgroundJob::create($validated);
 
         session()->flash('success', 'Successfully created job.');
 
         return redirect()->route('background-jobs.index');
     }
 
-    public function show(PhpExecCommandModel $job): View
+    public function show(BackgroundJob $job): View
     {
         return view('background_jobs.show', compact('job'));
     }
 
-    public function retry(PhpExecCommandModel $job): RedirectResponse
+    public function retry(BackgroundJob $job): RedirectResponse
     {
         if ($job->failed) {
             $job->update([
-                'status' => PhpJobStatusEnum::Pending->value,
+                'status' => JobStatusEnum::Pending->value,
                 'retry_count' => $job->retry_count + 1
             ]);
         }

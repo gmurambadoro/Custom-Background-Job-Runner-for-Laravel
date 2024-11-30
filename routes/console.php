@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\PhpJobStatusEnum;
-use App\Models\PhpExecCommandModel;
+use App\Enums\JobStatusEnum;
+use App\Models\BackgroundJob;
 use App\Services\SimplePhpClassInvoker;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 function runBackgroundJob(): void
 {
     while (true) {
-        $pendingCommands = PhpExecCommandModel::where('status', PhpJobStatusEnum::Pending->value)
+        $pendingCommands = BackgroundJob::where('status', JobStatusEnum::Pending->value)
             ->orderBy('priority', 'desc') // higher priority jobs first
             ->paginate(20);
 
@@ -19,7 +19,7 @@ function runBackgroundJob(): void
 
         foreach ($pendingCommands as $command) {
             try {
-                $command->update(['status' => PhpJobStatusEnum::Running->value]);
+                $command->update(['status' => JobStatusEnum::Running->value]);
 
                 // todo: Check for delayed execution and run command after the delay
 
@@ -30,14 +30,14 @@ function runBackgroundJob(): void
                     arguments: $command->arguments ?? [],
                 );
 
-                $command->update(['status' => PhpJobStatusEnum::Completed->value]);
+                $command->update(['status' => JobStatusEnum::Completed->value]);
 
                 Log::info(sprintf('Successfully executed command: %s', $command->command_text));
             } catch (Throwable $exception) {
                 Log::error(collect([$exception->getMessage(), $exception->getTraceAsString()])->join(PHP_EOL));
 
                 $command->update([
-                    'status' => PhpJobStatusEnum::Failed->value,
+                    'status' => JobStatusEnum::Failed->value,
                     'output' => $exception->getMessage(),
                 ]);
             }

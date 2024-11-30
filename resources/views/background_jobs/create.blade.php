@@ -56,15 +56,15 @@
                 <fieldset>
                     <legend>Job Priority:</legend>
                     <label>
-                        <input type="radio" name="priority" value="{{ \App\Enums\PhpJobPriorityEnum::Low->value }}"/>
+                        <input type="radio" name="priority" value="{{ \App\Enums\JobPriorityEnum::Low->value }}"/>
                         Low
                     </label>
                     <label>
-                        <input type="radio" name="priority" value="{{ \App\Enums\PhpJobPriorityEnum::Medium->value }}"/>
+                        <input type="radio" name="priority" value="{{ \App\Enums\JobPriorityEnum::Medium->value }}"/>
                         Medium
                     </label>
                     <label>
-                        <input type="radio" name="priority" value="{{ \App\Enums\PhpJobPriorityEnum::High->value }}"/>
+                        <input type="radio" name="priority" value="{{ \App\Enums\JobPriorityEnum::High->value }}"/>
                         High
                     </label>
                 </fieldset>
