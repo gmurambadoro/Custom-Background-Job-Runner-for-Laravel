@@ -26,7 +26,7 @@ class BackgroundJobsController extends Controller
     {
         $validated = $request->validated();
 
-        BackgroundJob::create($validated);
+        BackgroundJob::create($validated)->dispatch();
 
         session()->flash('success', 'Successfully created job.');
 
