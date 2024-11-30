@@ -7,6 +7,7 @@ use App\Models\BackgroundJob;
 use App\Services\SimplePhpClassInvoker;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Log;
 use Throwable;
 
 /**
@@ -37,7 +38,9 @@ class ProcessBackgroundJob implements ShouldQueue
      */
     public function handle(): void
     {
+        Log::channel('custom')->info(sprintf('Job #%s: Invoking command [ %s ]..', $this->backgroundJob->id, $this->backgroundJob->command_text));
         $this->invokePhpClass(backgroundJob: $this->backgroundJob);
+        Log::channel('custom')->info(sprintf('Job #%s: Finished invoking command [ %s ] [ Status: %s ]', $this->backgroundJob->id, $this->backgroundJob->refresh()->command_text, $this->backgroundJob->refresh()->status->name));
     }
 
     /**
@@ -51,7 +54,8 @@ class ProcessBackgroundJob implements ShouldQueue
     private function invokePhpClass(BackgroundJob $backgroundJob): void
     {
         try {
-            // Invoke the PHP class using the SimplePhpClassInvoker service
+            Log::channel('custom')->info($backgroundJob->command_text);
+
             SimplePhpClassInvoker::invoke(
                 fqcn: $backgroundJob->fqcn,
                 method: $backgroundJob->method,
@@ -61,16 +65,14 @@ class ProcessBackgroundJob implements ShouldQueue
 
             // Update the job status to Completed
             $backgroundJob->update(['status' => JobStatusEnum::Completed->value]);
-
-            // todo: Log to stdout
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             // Update the job status to Failed with the exception message
             $backgroundJob->update([
                 'status' => JobStatusEnum::Failed->value,
                 'output' => $exception->getMessage(),
             ]);
 
-            // todo: Log to stderr
+            Log::channel('custom')->error(sprintf("Job #%s: Error encountered :: %s", $backgroundJob->id, $exception->getMessage()));
         }
     }
 

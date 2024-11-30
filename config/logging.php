@@ -89,7 +89,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
             ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
@@ -127,6 +127,16 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        // This custom logging channel writes log messages to a single file.
+        // It is the logger that is used to track the background job runner
+        // The logging level can be set via the LOG_LEVEL environment variable, defaulting to 'debug' if not specified.
+        // The 'replace_placeholders' option ensures that placeholders in log messages are replaced with their corresponding values.
+        'custom' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/background_jobs.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
     ],
 
 ];

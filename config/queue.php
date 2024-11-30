@@ -15,7 +15,7 @@ return [
 
     'default' => env('QUEUE_CONNECTION', 'database'),
 
-    'retries' => env('QUEUE_RETRIES', 3),
+    'retries' => (int)env('QUEUE_RETRIES', 3),
 
     /*
     |--------------------------------------------------------------------------

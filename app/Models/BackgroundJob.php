@@ -19,7 +19,7 @@ final class BackgroundJob extends Model
 
     protected $casts = [
         'arguments' => 'array', // Casts the arguments attribute as an array
-        'script' => JobStatusEnum::class, // Casts the script attribute as an enum value
+        'status' => JobStatusEnum::class, // Casts the script attribute as an enum value
         'priority' => JobPriorityEnum::class, // Casts the priority attribute as an enum value
         'is_static' => 'boolean', // Casts the is_static attribute as a boolean
     ];
@@ -41,12 +41,38 @@ final class BackgroundJob extends Model
                 $args = collect($this->arguments)->map(fn($item) => sprintf('"%s"', $item))->join(", ");
 
                 if ($this->is_static) {
-                    return sprintf("%s::%s(%s)", $this->fqcn, $this->method, $args);
+                    return sprintf("Job #%s: %s::%s(%s)", $this->id, $this->fqcn, $this->method, $args);
                 } else {
-                    return sprintf('(new %s())->%s(%s)', $this->fqcn, $this->method, $args);
+                    return sprintf('Job #%s: (new %s())->%s(%s)', $this->id, $this->fqcn, $this->method, $args);
                 }
             },
         );
+    }
+
+    public function toLogMessage(): string
+    {
+        $props = collect([
+            sprintf(
+                "Job #: %s, FQCN: %s, Method: %s, Arguments: %s, Static Call: %s, Priority: %s, Status: %s",
+                $this->id,
+                $this->fqcn,
+                $this->method,
+                json_encode($this->arguments), // Encode array arguments as JSON for readability
+                $this->is_static ? 'Yes' : 'No',
+                $this->priority->name,
+                $this->status->name,
+            ),
+        ]);
+
+        if ($this->delay) {
+            $props->add(", Delay: $this->delay sec");
+        }
+
+        if ($this->output) {
+            $props->add(sprintf("%Message: %s", PHP_EOL, $this->output));
+        }
+
+        return $props->join("");
     }
 
     /**
@@ -97,6 +123,9 @@ final class BackgroundJob extends Model
             // Dispatch without delay
             ProcessBackgroundJob::dispatch($this)->onQueue($queue);
         }
+
+        \Log::channel('custom')->info(sprintf('Job #%s: Dispatched job [Status = %s]', $this->id, $this->status->name));
+        \Log::channel('custom')->info($this->toLogMessage());
 
         return $this;
     }

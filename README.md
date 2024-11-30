@@ -1,9 +1,11 @@
-# Laravel Docker Template
+# Laravel Custom Background Job Runner
 
-🚀 **Quickly set up your Laravel application with Docker!**
+A custom system to execute PHP classes as background jobs, independent of Laravel's built-in queue system
 
-This starter template simplifies the process of building a Laravel application using Docker, allowing you to get up and
-running without needing to install PHP locally.
+## Requirements
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/). Please make sure that you install the right version
+  for your operating system. Docker Desktop runs smoothly on Windows, macOS and Linux.
 
 ## Features
 

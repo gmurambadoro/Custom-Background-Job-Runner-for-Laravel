@@ -1,36 +1,65 @@
 <?php
 
-use App\Enums\JobStatusEnum;
+use App\Enums\JobPriorityEnum;
 use App\Models\BackgroundJob;
+use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
 function runBackgroundJob(): void
 {
-    while (true) {
-        $pendingJobs = BackgroundJob::where('status', JobStatusEnum::Pending->value)
-            ->orderBy('priority', 'desc') // higher priority jobs first
-            ->paginate(20);
+    $sampleJobsCollection = collect([
+        BackgroundJob::make([
+            'fqcn' => Artisan::class,
+            'is_static' => true,
+            'method' => 'command',
+            'arguments' => ['app:php-exec'],
+        ]),
 
-        if ($pendingJobs->isEmpty()) {
-            break;
-        }
+        BackgroundJob::make([
+            'fqcn' => User::class,
+            'is_static' => true,
+            'method' => 'find',
+            'arguments' => [1],
+        ]),
 
-        foreach ($pendingJobs as $job) {
-            try {
-                $job->dispatch();
+        BackgroundJob::make([
+            'fqcn' => Process::class,
+            'is_static' => true,
+            'delay' => 20,
+            'method' => 'run',
+            'priority' => JobPriorityEnum::Medium->value,
+            'arguments' => ['ls -lh'],
+        ]),
 
-                Log::info(sprintf('Successfully executed command: %s', $job->refresh()->command_text));
-            } catch (Throwable $exception) {
-                Log::error(collect([$exception->getMessage(), $exception->getTraceAsString()])->join(PHP_EOL));
+        BackgroundJob::make([
+            'fqcn' => Process::class,
+            'is_static' => true,
+            'delay' => 20,
+            'method' => 'run',
+            'priority' => JobPriorityEnum::High->value,
+            'arguments' => ['cd /'],
+        ]),
+    ]);
 
-                $job->update([
-                    'status' => JobStatusEnum::Failed->value,
-                    'output' => $exception->getMessage(),
-                ]);
-            }
-        }
+    Log::channel('custom')->info(sprintf('Running a collection of %s sample background jobs', $sampleJobsCollection->count()));
+
+    /** @var BackgroundJob $job */
+    foreach ($sampleJobsCollection as $job) {
+        Artisan::call(
+            command: "app:php-exec",
+            parameters: [
+                'fqcn' => $job->fqcn,
+                'method' => $job->method,
+                'arguments' => $job->arguments,
+                '--delay' => $job->delay,
+                '--static' => $job->is_static,
+                '--priority' => $job->priority->value,
+            ],
+        );
     }
+
+    Log::channel('custom')->info(sprintf('Completed running a sample of %s background jobs.', $sampleJobsCollection->count()));
 }
 
 Artisan::command('inspire', function () {

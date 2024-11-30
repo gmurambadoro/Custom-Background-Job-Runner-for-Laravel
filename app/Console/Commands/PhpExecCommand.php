@@ -6,6 +6,8 @@ use App\Enums\JobStatusEnum;
 use App\Http\Requests\BackgroundJobRequest;
 use App\Models\BackgroundJob;
 use Illuminate\Console\Command;
+use Log;
+use Throwable;
 use Validator;
 
 /**
@@ -44,22 +46,27 @@ final class PhpExecCommand extends Command
     {
         $fqcn = $this->argument('fqcn');
         $method = $this->argument('method');
-        $arguments = $this->argument('arguments') ?? [];
+        $arguments = collect($this->argument('arguments') ?? []);
         $static = (bool)$this->option('static') ?? false;
         $priority = (int)$this->option('priority');
         $delay = (int)$this->option('delay');
 
         try {
-            $message = sprintf('%s: Received payload for command {%s}::{%s} static=%s.', $this->name, $fqcn, $method, $static ? 'true' : 'false');
+            $isStaticCall = $static ? '--static' : '';
+            $isDelayedCall = $delay ? "--delay=$delay" : '';
 
-            $this->info($message);
+            $message = <<<HEREDOC
+$this->name $fqcn $method {$arguments->join(", ")} $isStaticCall --priority=$priority $isDelayedCall
+HEREDOC;;
+
+            Log::channel('custom')->info(str($message)->trim()->toString());
 
             // Validate input parameters using a custom request validation rule
             $validated = Validator::make(
                 data: [
                     'fqcn' => $fqcn,
                     'method' => $method,
-                    'arguments' => $arguments,
+                    'arguments' => $arguments->toArray(),
                     'is_static' => $static,
                     'status' => JobStatusEnum::Pending->value,
                     'priority' => $priority,
@@ -69,16 +76,10 @@ final class PhpExecCommand extends Command
             )->validate();
 
             // Create a new background job instance and dispatch it
-            $job = BackgroundJob::create($validated)->dispatch();
-
-            // Log the job execution with relevant information
-            $this->info($message = sprintf('Saved command %s', $job->command_text));
-            \Log::info($message, compact(['fqcn', 'method', 'arguments', 'static']));
-        } catch (\Throwable $exception) {
+            BackgroundJob::create($validated)->dispatch();
+        } catch (Throwable $exception) {
             // Handle any exceptions that occur during command execution
-            $errorMessage = sprintf('Error: {%s}::{%s} %s', $fqcn, $method, $exception->getMessage());
-            $this->error($errorMessage);
-            \Log::error($errorMessage);
+            Log::channel('custom')->error(sprintf('Error: %s', $exception->getMessage()));
         }
     }
 }
