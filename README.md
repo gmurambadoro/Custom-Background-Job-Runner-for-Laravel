@@ -53,7 +53,7 @@ chmod -R 0777 storage/
 
 ### Add some background Jobs
 
-#### Using the web form
+#### 1. Using the web form
 
 You can add some jobs from the application by clicking on the `+ New Job` button.
 
@@ -61,7 +61,7 @@ You can add some jobs from the application by clicking on the `+ New Job` button
 
 Complete the form and save your changes. A new job will be created.
 
-#### Using the `runBackgroundJob` script that loads some example jobs
+#### 2. Using the `runBackgroundJob` script that loads some example jobs
 
 Inside the container, run the following command to load a list of example jobs.
 
@@ -71,4 +71,38 @@ php artisan runBackgroundJob
 
 **Note:** You must only run this command after you have logged into the container via `./dkconnect.sh` or
 `./dkconnect.bat` for Windows.
+
+#### 3. Using the dedicated console command
+
+- Inside the container run the command `php artisan help app:php-exec`. This will guide you on how to add background
+  commands via the terminal.
+
+```text
+root@Background-Job-Runner:/var/www/html# php artisan help app:php-exec
+Description:
+  Executes a class in the background, outside of Laravel's main application process
+
+Usage:
+  app:php-exec [options] [--] <fqcn> <method> [<arguments>...]
+
+Arguments:
+  fqcn                       Fully Qualified Class Name (FQCN) e.g. App\Model\User
+  method                     The method to invoke on the FQCN instance e.g. create
+  arguments                  Arguments in the order expected by the method signature
+
+Options:
+      --priority[=PRIORITY]  Priority of the job, either 0, 1 or 2 [default: "0"]
+      --delay[=DELAY]        Delay in seconds - the job will be executed only after the specified delay [default: "0"]
+      --static               Whether the invocation is static or not. A static invocation is invoked on the class directly and not on it's object instance.
+  -h, --help                 Display help for the given command. When no command is given display help for the list command
+      --silent               Do not output any message
+  -q, --quiet                Only errors are displayed. All other output is suppressed
+  -V, --version              Display this application version
+      --ansi|--no-ansi       Force (or disable --no-ansi) ANSI output
+  -n, --no-interaction       Do not ask any interactive question
+      --env[=ENV]            The environment the command should run under
+  -v|vv|vvv, --verbose       Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+```
+
 
