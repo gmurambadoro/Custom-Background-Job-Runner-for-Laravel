@@ -35,7 +35,7 @@
                             <samp>{{ $job->priority->name }}</samp>
                         </td>
                         <td>{{ $job->status }}</td>
-                        <td style="display: flex; gap: 2px;">
+                        <td style="display: flex; gap: 2px;" nowrap="">
                             <a href="{{ route('background-jobs.show', $job) }}" role="button"
                                class="secondary">Details</a>
 

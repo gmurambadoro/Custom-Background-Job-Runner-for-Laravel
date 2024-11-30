@@ -69,7 +69,7 @@ final class BackgroundJob extends Model
         }
 
         if ($this->output) {
-            $props->add(sprintf("%Message: %s", PHP_EOL, $this->output));
+            $props->add(sprintf("%sMessage: %s", PHP_EOL, $this->output));
         }
 
         return $props->join("");
@@ -83,7 +83,7 @@ final class BackgroundJob extends Model
     public function failed(): Attribute
     {
         return new Attribute(
-            get: fn() => $this->status === JobStatusEnum::Failed->value,
+            get: fn() => $this->status->value === JobStatusEnum::Failed->value,
         );
     }
 
@@ -95,7 +95,7 @@ final class BackgroundJob extends Model
     public function running(): Attribute
     {
         return new Attribute(
-            get: fn() => $this->status === JobStatusEnum::Running->value,
+            get: fn() => $this->status->value === JobStatusEnum::Running->value,
         );
     }
 

@@ -163,3 +163,19 @@ will ensure that these jobs will actually be executed.
 
 ![](./.screenshots/queue.png)
 
+![](./.screenshots/queue-output.png)
+
+### Retrying Failed Jobs
+
+If there are any jobs that have failed, the application **automatically** retries them, based on the configuration in
+`config/queue.php`:
+
+```php
+'retries' => (int)env('QUEUE_RETRIES', 3),
+```
+
+You can also manually retry a `failed` job by clicking the `Retry` button on the dashboard.
+
+![](./.screenshots/job-retry.png)
+
+The *Retry* button conveniently displays the current retry count of the job as well.
