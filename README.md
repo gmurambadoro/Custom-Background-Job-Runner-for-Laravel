@@ -199,6 +199,26 @@ or simply select it in the *Priority* field of the *+ New Job* form.
 The background jobs processor will prioritize jobs in the following order: `high` -> `medium` -> `low`. The default
 priority is `low`.
 
+## Logging strategy
+
+Logs for background jobs are stored in the `storage/logs/background_job.log` file. This is configured in the `custom`
+logger in `config/logging.php`
+
+```php
+    // This custom logging channel writes log messages to a single file.
+    // It is the logger that is used to track the background job runner
+    // The logging level can be set via the LOG_LEVEL environment variable, defaulting to 'debug' if not specified.
+    // The 'replace_placeholders' option ensures that placeholders in log messages are replaced with their corresponding values.
+    'custom' => [
+        'driver' => 'single',
+        'path' => storage_path('logs/background_jobs.log'),
+        'level' => env('LOG_LEVEL', 'debug'),
+        'replace_placeholders' => true,
+    ],
+```
+
+By default, the logger logs everything. However, you can change this by updating the `LOG_LEVEL` environment variable.
+
 ## Security considerations
 
 The application maintains a blacklist of classes and methods that are not allowed to be invoked. These lists are
