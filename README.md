@@ -179,3 +179,56 @@ You can also manually retry a `failed` job by clicking the `Retry` button on the
 ![](./.screenshots/job-retry.png)
 
 The *Retry* button conveniently displays the current retry count of the job as well.
+
+### Delayed Jobs
+
+- Pass a `--delay=<value>` flag to the `php artisan app:php-exec` command indicating that the job should be delayed by
+  that number of seconds.
+- Alternatively, on the dashboard simply enter the value in the _Job Delay (in seconds) *_ field of the *+ New Job*
+  form.
+
+### Prioritized Jobs
+
+The application supports three priority levels names `low`, `medium` and `high`. Pass the `--priority=<value>` flag to
+the `app:php-exec` command
+or simply select it in the *Priority* field of the *+ New Job* form.
+
+The background jobs processor will prioritize jobs in the following order: `high` -> `medium` -> `low`. The default
+priority is `low`.
+
+## Security considerations
+
+The application maintains a blacklist of classes and methods that are not allowed to be invoked. These lists are
+maintained in the `App\\Services\\SimplePhpClassInvoker` class.
+
+```php
+use App\Services;
+
+class SimplePhpClassInvoker {
+    public static function getBlacklistedClasses(): Collection
+    {
+        return collect([
+            \Artisan::class,
+            Artisan::class,
+            Application::class,
+            \Symfony\Component\Console\Application::class,
+            \Illuminate\Foundation\Application::class,
+        ]);
+    }
+    
+    public static function getBlacklistedMethods(): Collection
+    {
+        return collect([
+            "update",
+            "delete",
+            "unlink",
+            "save",
+            "create",
+            'destroy',
+        ]);
+    }
+}
+
+```
+
+You can modify these lists as you wish.
