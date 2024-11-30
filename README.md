@@ -156,6 +156,10 @@ You can also check the logs in `storage/logs/background_jobs.log`
 **IMPORTANT::** As you can see, the jobs are marked as `running` but we haven't set up a background job processor that
 will ensure that these jobs will actually be executed.
 
-You can verify ths
+### Setting up background jobs runner
 
+- In a **separate** terminal window, run one of `./dkqueue.sh` (Linux / macOS) or
+  `./dkqueue.bat` (Windows). This command will invoke any pending jobs and update their statuses.
+
+![](./.screenshots/queue.png)
 
