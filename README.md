@@ -6,6 +6,9 @@ A custom system to execute PHP classes as background jobs, independent of Larave
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/). Please make sure that you install the right version
   for your operating system. Docker Desktop runs smoothly on Windows, macOS and Linux.
+- If you are not using Docker as recommended, then make sure that you have installed the following on your machine:
+    - [PHP 8.3](https://www.php.net/)
+    - [Composer](https://getcomposer.org/)
 
 ## Installation
 
