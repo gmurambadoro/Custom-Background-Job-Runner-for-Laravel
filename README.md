@@ -125,8 +125,6 @@ php artisan app:php-exe "App\\Models\\User" all --static
 php artisan app:php-exec "\Process" run "ls -lh" --static --priority=2 --delay=15
 ```
 
-**Screenshot**
-
 ![](./.screenshots/pending-jobs.png)
 
 You can also check the logs in `storage/logs/background_jobs.log`
@@ -138,6 +136,20 @@ You can also check the logs in `storage/logs/background_jobs.log`
 [2024-11-30 12:15:01] local.INFO: app:php-exec \Process run ls -lh --static --priority=2 --delay=15  
 [2024-11-30 12:15:01] local.INFO: Job #2: Dispatched job [Status = Running]  
 [2024-11-30 12:15:01] local.INFO: Job #: 2, FQCN: \Process, Method: run, Arguments: ["ls -lh"], Static Call: Yes, Priority: High, Status: Running, Delay: 15 sec  
+[2024-11-30 12:21:36] local.INFO: Running a collection of 4 sample background jobs  
+[2024-11-30 12:21:36] local.INFO: app:php-exec Illuminate\Support\Facades\Artisan command app:php-exec --static --priority=0  
+[2024-11-30 12:21:36] local.INFO: Job #3: Dispatched job [Status = Running]  
+[2024-11-30 12:21:36] local.INFO: Job #: 3, FQCN: Illuminate\Support\Facades\Artisan, Method: command, Arguments: ["app:php-exec"], Static Call: Yes, Priority: Low, Status: Running  
+[2024-11-30 12:21:36] local.INFO: app:php-exec App\Models\User find 1 --static --priority=0  
+[2024-11-30 12:21:36] local.INFO: Job #4: Dispatched job [Status = Running]  
+[2024-11-30 12:21:36] local.INFO: Job #: 4, FQCN: App\Models\User, Method: find, Arguments: [1], Static Call: Yes, Priority: Low, Status: Running  
+[2024-11-30 12:21:36] local.INFO: app:php-exec Process run ls -lh --static --priority=1 --delay=20  
+[2024-11-30 12:21:36] local.INFO: Job #5: Dispatched job [Status = Running]  
+[2024-11-30 12:21:36] local.INFO: Job #: 5, FQCN: Process, Method: run, Arguments: ["ls -lh"], Static Call: Yes, Priority: Medium, Status: Running, Delay: 20 sec  
+[2024-11-30 12:21:36] local.INFO: app:php-exec Process run cd / --static --priority=2 --delay=20  
+[2024-11-30 12:21:36] local.INFO: Job #6: Dispatched job [Status = Running]  
+[2024-11-30 12:21:36] local.INFO: Job #: 6, FQCN: Process, Method: run, Arguments: ["cd \/"], Static Call: Yes, Priority: High, Status: Running, Delay: 20 sec  
+[2024-11-30 12:21:36] local.INFO: Completed running a sample of 4 background jobs.  
 
 ```
 
