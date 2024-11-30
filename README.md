@@ -122,8 +122,28 @@ php artisan app:php-exe "App\\Models\\User" all --static
 **<em>Process::run('ls -lh')</em>**
 
 ```shell
-php artisan app:php-exec "\Process" run "ls -lh"
+php artisan app:php-exec "\Process" run "ls -lh" --static --priority=2 --delay=15
 ```
 
+**Screenshot**
+
+![](./.screenshots/pending-jobs.png)
+
+You can also check the logs in `storage/logs/background_jobs.log`
+
+```text
+[2024-11-30 12:14:47] local.INFO: app:php-exec App\Models\User all  --static --priority=0  
+[2024-11-30 12:14:47] local.INFO: Job #1: Dispatched job [Status = Running]  
+[2024-11-30 12:14:47] local.INFO: Job #: 1, FQCN: App\Models\User, Method: all, Arguments: [], Static Call: Yes, Priority: Low, Status: Running  
+[2024-11-30 12:15:01] local.INFO: app:php-exec \Process run ls -lh --static --priority=2 --delay=15  
+[2024-11-30 12:15:01] local.INFO: Job #2: Dispatched job [Status = Running]  
+[2024-11-30 12:15:01] local.INFO: Job #: 2, FQCN: \Process, Method: run, Arguments: ["ls -lh"], Static Call: Yes, Priority: High, Status: Running, Delay: 15 sec  
+
+```
+
+**IMPORTANT::** As you can see, the jobs are marked as `running` but we haven't set up a background job processor that
+will ensure that these jobs will actually be executed.
+
+You can verify ths
 
 
