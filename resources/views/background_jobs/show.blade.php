@@ -27,6 +27,15 @@
             </tr>
         @endif
 
+        @if($job->retry_count)
+            <tr>
+                <th>Retried</th>
+                <td>
+                    <samp>{{ $job->retry_count }} {{ \Illuminate\Support\Str::plural('time', $job->retry_count) }}</samp>
+                </td>
+            </tr>
+        @endif
+
         @if ($job->output)
             <tr>
                 <td colspan="2">
