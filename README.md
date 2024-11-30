@@ -2,6 +2,8 @@
 
 A custom system to execute PHP classes as background jobs, independent of Laravel's built-in queue system
 
+![](screenshot.png)
+
 ## Requirements
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/). Please make sure that you install the right version
