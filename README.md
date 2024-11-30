@@ -105,4 +105,25 @@ Options:
 
 ```
 
+The command is pretty much self-explanatory; to add a background job you must supply the *fully qualified class name (
+FQCN)* of the class, the name of the method to invoke and a list of arguments. Depending on the method to be called, you
+might need to specify the `--static` switch
+indicating that the method will be invoked statically, instead of on a class instance. Other switches like `--delay` and
+`--priority` can also be passed.
+
+Please see below some examples of commands you can pass:
+
+**<em>App\Models\User::all()</em>**
+
+```shell
+php artisan app:php-exe "App\\Models\\User" all --static
+```
+
+**<em>Process::run('ls -lh')</em>**
+
+```shell
+php artisan app:php-exec "\Process" run "ls -lh"
+```
+
+
 
