@@ -73,4 +73,12 @@ class ProcessBackgroundJob implements ShouldQueue
             // todo: Log to stderr
         }
     }
+
+    /**
+     * Determine number of times the job may be attempted.
+     */
+    public function tries(): int
+    {
+        return (int)config('queues.retries', 3);
+    }
 }
