@@ -3,10 +3,18 @@
 namespace App\Console\Commands;
 
 use App\Enums\JobStatusEnum;
-use App\Jobs\ProcessBackgroundJob;
+use App\Http\Requests\BackgroundJobRequest;
 use App\Models\BackgroundJob;
 use Illuminate\Console\Command;
+use Validator;
 
+/**
+ * Console command responsible for executing a PHP class method in the background.
+ *
+ * This command provides a flexible way to invoke methods on PHP classes, allowing for
+ * customization of object instantiation and method invocation. The command also handles
+ * validation of input parameters and logging of job execution.
+ */
 final class PhpExecCommand extends Command
 {
     /**
@@ -46,34 +54,28 @@ final class PhpExecCommand extends Command
 
             $this->info($message);
 
-            \Validator::make(compact('fqcn', 'method', 'arguments', 'static'), rules: [
-                'fqcn' => 'required',
-                'method' => 'required',
-                'arguments' => 'nullable|array',
-                'static' => 'boolean',
-                'priority' => 'int|between:0,2',
-            ])->validate();
+            // Validate input parameters using a custom request validation rule
+            $validated = Validator::make(
+                data: [
+                    'fqcn' => $fqcn,
+                    'method' => $method,
+                    'arguments' => $arguments,
+                    'is_static' => $static,
+                    'status' => JobStatusEnum::Pending->value,
+                    'priority' => $priority,
+                    'delay' => $delay,
+                ],
+                rules: BackgroundJobRequest::getValidationRules(),
+            )->validate();
 
-            $job = BackgroundJob::create([
-                'fqcn' => $fqcn,
-                'method' => $method,
-                'arguments' => $arguments,
-                'is_static' => $static,
-                'status' => JobStatusEnum::Pending->value,
-                'priority' => $priority,
-                'delay' => $delay,
-            ]);
+            // Create a new background job instance and dispatch it
+            $job = BackgroundJob::create($validated)->dispatch();
 
-            if ($job->delay) {
-                ProcessBackgroundJob::dispatch($job)->delay($job->delay);
-            } else {
-                ProcessBackgroundJob::dispatch($job);
-            }
-
+            // Log the job execution with relevant information
             $this->info($message = sprintf('Saved command %s', $job->command_text));
-
             \Log::info($message, compact(['fqcn', 'method', 'arguments', 'static']));
         } catch (\Throwable $exception) {
+            // Handle any exceptions that occur during command execution
             $errorMessage = sprintf('Error: {%s}::{%s} %s', $fqcn, $method, $exception->getMessage());
             $this->error($errorMessage);
             \Log::error($errorMessage);
